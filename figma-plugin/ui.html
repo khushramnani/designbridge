@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body { font: 13px system-ui, sans-serif; margin: 0; padding: 14px; }
+      h1 { font-size: 14px; margin: 0 0 8px; }
+      p { color: #666; margin: 0 0 10px; line-height: 1.4; }
+      textarea {
+        width: 100%; height: 180px; box-sizing: border-box; resize: vertical;
+        font: 11px ui-monospace, monospace; border: 1px solid #ddd; border-radius: 6px; padding: 8px;
+      }
+      .opt { display: flex; align-items: center; gap: 8px; margin: 10px 0 4px; color: #333; }
+      .opt input { margin: 0; }
+      button {
+        margin-top: 10px; width: 100%; padding: 10px; border: 0; border-radius: 8px;
+        background: #0d99ff; color: #fff; font-weight: 600; cursor: pointer;
+      }
+      button:disabled { background: #aaa; cursor: default; }
+      .status { margin-top: 8px; font-size: 12px; color: #333; min-height: 16px; }
+      .hint { font-size: 11px; color: #999; margin-top: 2px; }
+    </style>
+  </head>
+  <body>
+    <h1>DesignBridge Import</h1>
+    <p>Paste the capture JSON from the Chrome extension, then click Import.</p>
+    <textarea id="json" placeholder='{"_designbridge":true, ...}'></textarea>
+    <label class="opt"><input type="checkbox" id="auto" /> Use Auto Layout (editable, less exact)</label>
+    <div class="hint">Off = pixel-perfect absolute positioning (recommended). On = responsive Auto Layout frames.</div>
+    <label class="opt"><input type="checkbox" id="outline" /> Flatten text to outlines (pixel-exact, not editable)</label>
+    <div class="hint">On = text becomes vector shapes that look identical for everyone, even without the fonts. Off = editable text.</div>
+    <button id="go">Import to canvas</button>
+    <div class="status" id="status"></div>
+
+    <script>
+      const $ = (id) => document.getElementById(id);
+      $("go").onclick = () => {
+        const raw = $("json").value.trim();
+        if (!raw) { $("status").textContent = "Paste the JSON first."; return; }
+        let data;
+        try { data = JSON.parse(raw); }
+        catch (e) { $("status").textContent = "Invalid JSON: " + e.message; return; }
+        if (!data._designbridge) { $("status").textContent = "This isn't a DesignBridge capture."; return; }
+        $("go").disabled = true;
+        $("status").textContent = "Importing…";
+        parent.postMessage({ pluginMessage: { type: "import", data: data, autoLayout: $("auto").checked, outline: $("outline").checked } }, "*");
+      };
+      onmessage = (e) => {
+        const m = e.data.pluginMessage;
+        if (!m) return;
+        if (m.type === "done") {
+          var msg = "✓ Imported " + m.count + " layers.";
+          if (m.subs && m.subs.length) msg += " Fonts substituted (not in your Figma): " + m.subs.join(", ") + ".";
+          if (m.grids) msg += " Normalized " + m.grids + " overflowing grid section(s) to fit.";
+          $("status").textContent = msg;
+          $("go").disabled = false;
+        }
+        if (m.type === "error") { $("status").textContent = "Error: " + m.message; $("go").disabled = false; }
+      };
+    </script>
+  </body>
+</html>

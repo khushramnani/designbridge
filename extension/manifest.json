@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "DesignBridge — Capture (dev)",
+  "version": "0.0.1",
+  "description": "Capture AI-generated designs (Claude Design) into editable Figma layers. Phase 1 walking skeleton.",
+  "permissions": ["clipboardWrite", "activeTab", "scripting"],
+  "host_permissions": [
+    "https://*.claudeusercontent.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://*.claudeusercontent.com/*"],
+      "all_frames": true,
+      "run_at": "document_idle",
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_title": "DesignBridge",
+    "default_popup": "popup.html"
+  }
+}
