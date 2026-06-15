@@ -42,7 +42,7 @@ export default function SignInPage() {
           <strong>Auth isn&apos;t configured on this deployment.</strong>
           <p className="muted" style={{ margin: "8px 0 0", fontSize: 14 }}>
             Set <code className="inline">NEXT_PUBLIC_SUPABASE_URL</code> and{" "}
-            <code className="inline">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> to enable sign-in.
+            <code className="inline">NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY</code> to enable sign-in.
           </p>
         </div>
       )}

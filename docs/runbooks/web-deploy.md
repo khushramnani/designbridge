@@ -23,11 +23,17 @@ dashboard is immediately valid at the relay.
 | Var | Value | Notes |
 |---|---|---|
 | `NEXT_PUBLIC_SUPABASE_URL` | `https://<ref>.supabase.co` | public |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key | public |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | `sb_publishable_…` | public; legacy anon key works as fallback |
 | `WEB_STORE` | `postgres` | in-memory won't persist on serverless |
 | `DATABASE_URL` | Supabase **pooled** string | see pooling note below |
 | `NEXT_PUBLIC_RELAY_URL` | `https://relay.designbridge.io` | shown in dashboard pairing helper + docs |
 | `NEXT_PUBLIC_SITE_URL` | `https://designbridge.io` | magic-link redirect base |
+
+### No Supabase secret key
+The web app does **not** use a Supabase secret/service_role key. It reaches Postgres directly via
+`DATABASE_URL` (sharing the relay's `Store`, D6), so it never goes through the Supabase client/PostgREST
+and never needs to bypass RLS. Add a secret key only if we later introduce server-side Admin-API
+operations (e.g. listing/deleting auth users).
 
 ### Pooling note (important)
 Serverless functions open many short-lived connections. Use Supabase's **transaction pooler**
