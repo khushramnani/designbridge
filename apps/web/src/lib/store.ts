@@ -1,10 +1,4 @@
-import {
-  InMemoryStore,
-  PostgresStore,
-  runMigrations,
-  type Queryable,
-  type Store,
-} from "@designbridge/app-relay";
+import { InMemoryStore, PostgresStore, type Queryable, type Store } from "@designbridge/app-relay";
 import { DATABASE_URL, WEB_STORE } from "./env.js";
 import { AccountService } from "./accounts.js";
 
@@ -25,7 +19,9 @@ async function createStore(): Promise<Store> {
       connectionString: DATABASE_URL,
       ...(isLocal ? {} : { ssl: { rejectUnauthorized: false } }),
     });
-    await runMigrations(pool as unknown as Queryable);
+    // The web app is a CONSUMER of the schema, not its migrator — the schema is provisioned out of
+    // band (`supabase db push` / the relay's boot migration). Running migrations here would read a
+    // SQL file that isn't in the serverless bundle (ENOENT on Vercel). Just connect.
     return new PostgresStore(pool as unknown as Queryable);
   }
   return new InMemoryStore();
