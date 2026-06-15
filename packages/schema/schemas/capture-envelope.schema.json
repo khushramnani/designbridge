@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.designbridge.io/capture-envelope/1.0.0",
+  "title": "DesignBridge Capture Envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "source", "capturedAt", "viewport", "root", "assets", "fonts", "warnings"],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "source": {
+      "type": "object",
+      "required": ["kind"],
+      "additionalProperties": true,
+      "properties": {
+        "kind": {
+          "enum": ["extension", "server-render", "direct"]
+        },
+        "tool": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "capturedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "viewport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height", "dpr"],
+      "properties": {
+        "width": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "height": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "dpr": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "root": {
+      "$ref": "#/$defs/captureNode"
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/asset"
+      }
+    },
+    "fonts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/font"
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/warning"
+      }
+    }
+  },
+  "$defs": {
+    "sha256Id": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "captureNode": {
+      "type": "object",
+      "required": ["tag", "x", "y", "w", "h"],
+      "additionalProperties": true,
+      "properties": {
+        "tag": {
+          "type": "string"
+        },
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "w": {
+          "type": "number"
+        },
+        "h": {
+          "type": "number"
+        },
+        "style": {
+          "type": "object"
+        },
+        "text": {
+          "type": ["string", "null"]
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/captureNode"
+          },
+          "default": []
+        },
+        "raster": {
+          "type": "boolean"
+        },
+        "imgData": {
+          "type": "string"
+        },
+        "assetId": {
+          "$ref": "#/$defs/sha256Id"
+        },
+        "src": {
+          "type": ["string", "null"]
+        },
+        "svg": {
+          "type": "string"
+        }
+      }
+    },
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "mime", "bytes", "storagePath"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/sha256Id"
+        },
+        "kind": {
+          "enum": ["raster", "image", "font"]
+        },
+        "mime": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "storagePath": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "font": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["family", "weights"],
+      "properties": {
+        "family": {
+          "type": "string",
+          "minLength": 1
+        },
+        "weights": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "matched": {
+          "type": "string"
+        }
+      }
+    },
+    "warning": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["code", "detail"],
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "nodeId": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}
+

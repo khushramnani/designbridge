@@ -1,0 +1,20 @@
+{
+  "name": "@designbridge/capture-core",
+  "version": "0.6.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./dist/content.js": "./dist/content.js"
+  },
+  "scripts": {
+    "build": "esbuild src/content.js --bundle --format=iife --outfile=dist/content.js && esbuild src/content.js --bundle --format=esm --outfile=dist/index.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.5",
+    "typescript": "^5.8.3"
+  }
+}
+

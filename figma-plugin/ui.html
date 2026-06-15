@@ -52,6 +52,7 @@
           var msg = "✓ Imported " + m.count + " layers.";
           if (m.subs && m.subs.length) msg += " Fonts substituted (not in your Figma): " + m.subs.join(", ") + ".";
           if (m.grids) msg += " Normalized " + m.grids + " overflowing grid section(s) to fit.";
+          if (m.warnings && m.warnings.length) msg += "\n⚠ " + m.warnings.join("\n⚠ ");
           $("status").textContent = msg;
           $("go").disabled = false;
         }

@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "DesignBridge — Capture",
+  "version": "0.1.0",
+  "description": "Capture AI-generated designs (Claude Design) into editable Figma layers, live.",
+  "permissions": ["clipboardWrite", "storage", "activeTab", "scripting"],
+  "host_permissions": [
+    "https://*.claudeusercontent.com/*",
+    "https://relay.designbridge.io/*",
+    "http://localhost/*",
+    "http://127.0.0.1/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.claudeusercontent.com/*"],
+      "all_frames": true,
+      "run_at": "document_idle",
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_title": "DesignBridge",
+    "default_popup": "popup.html"
+  }
+}

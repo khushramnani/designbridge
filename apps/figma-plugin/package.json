@@ -1,0 +1,20 @@
+{
+  "name": "@designbridge/app-figma-plugin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.ui.json --noEmit",
+    "test": "node -e \"process.exit(0)\""
+  },
+  "dependencies": {
+    "@designbridge/figma-builder": "workspace:*",
+    "@designbridge/schema": "workspace:*"
+  },
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.100.2",
+    "esbuild": "^0.25.5",
+    "typescript": "^5.8.3"
+  }
+}

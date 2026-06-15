@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body { font: 13px system-ui, sans-serif; margin: 0; padding: 14px; color: #1a1a1a; }
+      h1 { font-size: 14px; margin: 0 0 8px; }
+      h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: #888; margin: 16px 0 6px; }
+      p { color: #666; margin: 0 0 8px; line-height: 1.4; }
+      .codeBox { display: none; background: #f4f8ff; border: 1px solid #cfe0ff; border-radius: 10px; padding: 12px; text-align: center; margin-bottom: 8px; }
+      .codeBox .label { font-size: 11px; color: #557; }
+      .code { font: 700 28px ui-monospace, monospace; letter-spacing: 6px; color: #0d66d0; margin-top: 4px; }
+      .relayRow { display: flex; gap: 6px; }
+      .relayRow input { flex: 1; font: 11px ui-monospace, monospace; border: 1px solid #ddd; border-radius: 6px; padding: 7px 8px; }
+      textarea { width: 100%; height: 140px; box-sizing: border-box; resize: vertical; font: 11px ui-monospace, monospace; border: 1px solid #ddd; border-radius: 6px; padding: 8px; }
+      .opt { display: flex; align-items: center; gap: 8px; margin: 8px 0 2px; color: #333; }
+      .opt input { margin: 0; }
+      button { margin-top: 8px; padding: 9px 12px; border: 0; border-radius: 8px; background: #0d99ff; color: #fff; font-weight: 600; cursor: pointer; }
+      button.secondary { background: #eee; color: #222; }
+      .status { margin-top: 10px; font-size: 12px; color: #333; min-height: 16px; white-space: pre-wrap; line-height: 1.4; }
+      .status.ok { color: #0d7a3a; }
+      .status.err { color: #c0392b; }
+      .hint { font-size: 11px; color: #999; margin-top: 2px; }
+      details { margin-top: 14px; }
+      summary { cursor: pointer; color: #666; font-size: 12px; }
+    </style>
+  </head>
+  <body>
+    <h1>DesignBridge Import</h1>
+    <p>Receives designs live from the Chrome extension and AI tools.</p>
+
+    <div class="codeBox" id="codeBox">
+      <div class="label">Pairing code</div>
+      <div class="code" id="code">——————</div>
+    </div>
+
+    <div class="status" id="status">Connecting…</div>
+
+    <h2>Relay</h2>
+    <div class="relayRow">
+      <input id="relay" placeholder="http://localhost:8080" />
+      <button id="saveRelay" class="secondary" style="margin-top: 0">Connect</button>
+    </div>
+
+    <details>
+      <summary>Offline fallback — paste capture JSON</summary>
+      <p class="hint">If the relay is unreachable, click “⬡ Send to Figma”, then paste the copied JSON here.</p>
+      <textarea id="json" placeholder='{"_designbridge":true, ...}'></textarea>
+      <label class="opt"><input type="checkbox" id="auto" /> Use Auto Layout (editable, less exact)</label>
+      <label class="opt"><input type="checkbox" id="outline" /> Flatten text to outlines (pixel-exact, not editable)</label>
+      <button id="import">Import to canvas</button>
+    </details>
+
+    <script>
+      /*__UI_BUNDLE__*/
+    </script>
+  </body>
+</html>

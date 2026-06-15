@@ -4,4 +4,10 @@ node_modules/
 dist/
 .env
 .env.local
+.env.*.local
 *.zip
+
+# Next.js (apps/web)
+.next/
+next-env.d.ts
+*.tsbuildinfo

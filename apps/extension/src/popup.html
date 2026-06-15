@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body { width: 280px; font: 13px system-ui, sans-serif; padding: 14px; margin: 0; color: #1a1a1a; }
+      h1 { font-size: 14px; margin: 0 0 4px; }
+      p.sub { color: #666; margin: 0 0 12px; line-height: 1.4; }
+      label { display: block; font-weight: 600; margin: 10px 0 3px; }
+      input { width: 100%; box-sizing: border-box; padding: 7px 8px; border: 1px solid #d0d0d0; border-radius: 6px; font: 12px ui-monospace, monospace; }
+      .row { display: flex; gap: 8px; }
+      .row > * { flex: 1; }
+      button { margin-top: 12px; width: 100%; padding: 9px; border: 0; border-radius: 7px; background: #0d99ff; color: #fff; font-weight: 600; cursor: pointer; }
+      button.secondary { background: #eee; color: #222; }
+      button:disabled { opacity: 0.5; cursor: default; }
+      .status { margin-top: 10px; font-size: 12px; min-height: 16px; line-height: 1.4; }
+      .ok { color: #0d7a3a; }
+      .err { color: #c0392b; }
+      .hint { font-size: 11px; color: #999; margin: 2px 0 0; }
+    </style>
+  </head>
+  <body>
+    <h1>DesignBridge</h1>
+    <p class="sub">Connect this browser to your Figma plugin. One-time setup.</p>
+
+    <label for="baseUrl">Relay URL</label>
+    <input id="baseUrl" placeholder="http://localhost:8080" />
+
+    <label for="apiKey">API key</label>
+    <input id="apiKey" type="password" placeholder="db_live_…" />
+
+    <button id="save" class="secondary">Save</button>
+
+    <label for="code">Pairing code (from the Figma plugin)</label>
+    <input id="code" placeholder="K7M3QF" maxlength="6" style="text-transform: uppercase" />
+    <button id="pair">Pair with Figma</button>
+
+    <button id="test" class="secondary">Test connection</button>
+
+    <div class="status" id="status"></div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

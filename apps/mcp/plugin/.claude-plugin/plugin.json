@@ -1,0 +1,10 @@
+{
+  "name": "designbridge",
+  "version": "0.1.0",
+  "description": "Render AI-generated designs onto your Figma canvas as editable layers. Adds the send_to_figma and get_figma_context tools.",
+  "author": { "name": "DesignBridge", "url": "https://designbridge.io" },
+  "homepage": "https://designbridge.io",
+  "repository": "https://github.com/designbridge/designbridge",
+  "license": "MIT",
+  "keywords": ["figma", "design", "mcp", "ui", "html-to-figma"]
+}

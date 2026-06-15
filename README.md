@@ -45,12 +45,29 @@ Figma plugin  ←  paste JSON  ←───────────────�
 
 The design appears as a hierarchy of frames with background colors, corner radii, borders, and text.
 
-## Known limits in this skeleton (intentional — Phase 2 work)
-- **Absolute positioning**, not Auto Layout yet (visually correct, not yet "responsive-editable").
-- **Fonts** fall back to Inter (Regular/Bold). Real font matching is Phase 2.
-- **Images** render as gray placeholders (embedding real bytes needs the backend + extension asset download).
-- **Gradients / shadows / filters** not mapped yet.
-- Transfer is **clipboard**, not the sync backend.
+## Testing
+
+`test/` holds the fidelity harness (Tier 4 of IMPROVEMENT-PLAN.md):
+
+```bash
+npm install playwright && npx playwright install chromium-headless-shell
+node test/run-capture-tests.js   # capture assertions (content.js vs golden fixture)
+node test/run-plugin-tests.js    # end-to-end: real capture -> real code.js vs stubbed Figma API
+```
+
+Sprint 1 (2026-06-10) fixed and covered by these tests: %-based border-radius (circles),
+white-space:pre (code blocks), ::before/::after capture, input/textarea/select
+value+placeholder, per-side + dashed borders, z-index paint order, italic /
+text-transform / text-decoration / text-shadow, line-height:normal, oklch
+box-shadows, decorated-text nodes keeping both box and text, capture warnings
+surfaced in the extension panel and plugin UI.
+
+## Known limits (next sprints — see IMPROVEMENT-PLAN.md)
+- **Absolute positioning** by default; Auto Layout is opt-in and approximate (AL v2 is Tier 3).
+- **Raster regions** lose webfonts and cross-origin images (Tier 2).
+- **Gradient angles** are approximate for non-square boxes; `object-fit`/`background-size` ignored (Tier 1 items 10–11).
+- **SVG `<use href>`** referencing external defs breaks (Tier 1 item 12).
+- Transfer is **clipboard**, not the sync backend (Tier 5).
 
 ## Roadmap
 - **Phase 2:** flexbox → Auto Layout, font matching, image embedding (backend + asset capture), gradients/shadows, color Variables, Component detection.

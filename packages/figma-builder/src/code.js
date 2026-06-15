@@ -16,6 +16,31 @@ var fontMap = {};
 var OUTLINE = false; // flatten text to vector outlines
 var RWARN = []; // runtime (build-time) warnings, merged with capture warnings
 
+// Cooperative yielding (FR-2.3): big imports must not block Figma's main thread, or the plugin
+// stops answering context.request / heartbeats and Figma flags it "not responding". The build
+// yields to the event loop every ~12ms and reports progress so callers see it's alive.
+var TOTAL = 0; // total nodes to build (for progress %)
+var lastYield = 0;
+var YIELD_MS = 12;
+function countNodes(node) {
+  if (!node) return 0;
+  var n = 1;
+  var ch = node.children || [];
+  for (var i = 0; i < ch.length; i++) n += countNodes(ch[i]);
+  return n;
+}
+function maybeYield() {
+  var now = Date.now();
+  if (now - lastYield < YIELD_MS) return null;
+  lastYield = now;
+  try {
+    figma.ui.postMessage({ type: "progress", count: count, total: TOTAL });
+  } catch (e) {}
+  return new Promise(function (r) {
+    setTimeout(r, 0);
+  });
+}
+
 // ---- generic helpers ----------------------------------------------------
 var INLINE = ["span","a","b","i","em","strong","small","sub","sup","mark","u","label","abbr","time","code","s","del","ins","q","cite","var","kbd","samp","big","tt"];
 function isInline(tag){ return tag === "#text" || INLINE.indexOf(tag) >= 0 || tag === "br"; }
@@ -492,7 +517,8 @@ function zKey(k){
   if (z === 0 && s.position && s.position !== "static") z = 0.5;
   return z;
 }
-function build(node, useAuto){
+async function build(node, useAuto){
+  var _y = maybeYield(); if (_y) await _y;
   // Bare "#text" fragment: whitespace-only ones are merge glue, not layers.
   if (node.tag === "#text" && (!node.text || !node.text.trim())) return null;
   // Raster safety net: nodes we can't reproduce natively arrive pre-baked as a
@@ -618,7 +644,7 @@ function build(node, useAuto){
     f.counterAxisSizingMode = "FIXED";
     var stretch = node.style.alignItems === "stretch" || node.style.alignItems === "normal";
     for (var i=0;i<kids.length;i++){
-      var c = build(kids[i], useAuto);
+      var c = await build(kids[i], useAuto);
       if (!c) continue;
       f.appendChild(c);
       if (stretch) { try { c.layoutAlign = "STRETCH"; } catch (e) {} }
@@ -633,7 +659,7 @@ function build(node, useAuto){
     });
     for (var j=0;j<ordered.length;j++){
       var kid = ordered[j].k;
-      var ch = build(kid, useAuto);
+      var ch = await build(kid, useAuto);
       if (!ch) continue;
       f.appendChild(ch);
       ch.x = kid.x - node.x;
@@ -660,7 +686,9 @@ figma.ui.onmessage = async function (msg){
     await resolveFonts(msg.data.tree);
     var data = msg.data;
     var gridsFixed = normalizeGrids(data.tree);
-    var root = build(data.tree, useAuto);
+    TOTAL = countNodes(data.tree);
+    lastYield = Date.now();
+    var root = await build(data.tree, useAuto);
     root.name = "DesignBridge — " + (data.sourceUrl ? decodeURIComponent(data.sourceUrl.split("/").pop().split("?")[0]) : "import");
     if (root.type === "FRAME" && (!root.fills || root.fills.length === 0))
       root.fills = [{ type:"SOLID", color:{ r:0.98, g:0.98, b:0.97 }, opacity:1 }];
@@ -679,6 +707,18 @@ figma.ui.onmessage = async function (msg){
     }
     root.x = Math.round(figma.viewport.center.x - rw / 2);
     root.y = Math.round(figma.viewport.center.y - rh / 2);
+    // Idempotent re-import (FR-2.7): a render delivered twice (redelivery) or re-sent must REPLACE
+    // its previous frame, not stack a duplicate. We tag each root with its render id and remove any
+    // prior frame carrying the same id before appending the new one.
+    if (msg.renderId){
+      try {
+        var prior = figma.currentPage.findOne(function (n) {
+          try { return n.getPluginData("db_render_id") === msg.renderId; } catch (e) { return false; }
+        });
+        if (prior) prior.remove();
+      } catch (e) {}
+      try { root.setPluginData("db_render_id", String(msg.renderId)); } catch (e) {}
+    }
     figma.currentPage.appendChild(root);
     figma.currentPage.selection = [root];
     figma.viewport.scrollAndZoomIntoView([root]);

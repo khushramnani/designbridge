@@ -1,0 +1,17 @@
+{
+  "name": "DesignBridge — Import",
+  "id": "designbridge-dev-local",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": [
+      "http://localhost:8080",
+      "ws://localhost:8080",
+      "https://relay.designbridge.io",
+      "wss://relay.designbridge.io"
+    ],
+    "reasoning": "Connects to the DesignBridge relay to receive designs and fetch their payloads."
+  }
+}

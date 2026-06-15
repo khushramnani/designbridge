@@ -1,0 +1,79 @@
+<!doctype html>
+<!-- DesignBridge golden fixture #1 — exercises every Tier 1 fidelity fix.
+     Each numbered block maps to an assertion in run-capture-tests.js -->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body { margin: 0; font: 16px/1.5 Arial, sans-serif; background: #fafafa; width: 900px; }
+  .row { padding: 24px; }
+
+  /* 1: percentage border-radius (circle) */
+  .avatar { width: 64px; height: 64px; border-radius: 50%; background: #7c3aed; }
+
+  /* 2: white-space pre (code block) */
+  pre.code { white-space: pre; font-family: monospace; background: #111; color: #9fe; padding: 16px; width: 400px; }
+
+  /* 3: pseudo-elements */
+  .card { position: relative; width: 300px; height: 120px; background: #fff; }
+  .card::before { content: ""; position: absolute; left: 0; top: 0; width: 6px; height: 120px; background: #f59e0b; }
+  .card::after { content: "NEW"; position: absolute; right: 8px; top: 8px; width: 40px; height: 18px; background: #ef4444; color: #fff; font-size: 12px; }
+
+  /* 5: per-side borders */
+  .quote { border-left: 4px solid #10b981; border-top: 0; border-right: 0; border-bottom: 0; padding: 12px; width: 280px; }
+  .divider { border-bottom: 2px dashed #94a3b8; width: 300px; height: 10px; }
+
+  /* 6: z-index stacking (red declared after but must paint UNDER blue) */
+  .stack { position: relative; width: 200px; height: 100px; }
+  .stack .blue { position: absolute; left: 0; top: 0; width: 120px; height: 80px; background: #2563eb; z-index: 5; }
+  .stack .red { position: absolute; left: 40px; top: 20px; width: 120px; height: 80px; background: #dc2626; z-index: 1; }
+
+  /* 7: italic / uppercase / underline / text-shadow */
+  .em-text { font-style: italic; }
+  .label { text-transform: uppercase; letter-spacing: 1px; font-size: 12px; }
+  .link { text-decoration: underline; color: #2563eb; }
+  .hero { text-shadow: 0 2px 4px rgba(0,0,0,0.4); font-size: 28px; }
+
+  /* 8: line-height normal (no explicit line-height) */
+  .para { line-height: normal; width: 400px; }
+
+  /* 9: oklch box-shadow */
+  .okbox { width: 100px; height: 60px; background: #fff; box-shadow: 0 4px 12px oklch(0.45 0.18 277 / 0.5); }
+</style>
+</head>
+<body>
+  <div class="row"><div class="avatar"></div></div>
+  <div class="row"><pre class="code">function hi() {
+  return "two
+lines";
+}</pre></div>
+  <div class="row"><div class="card"><span>Card body</span></div></div>
+  <div class="row">
+    <!-- 4: form fields -->
+    <input id="inp1" type="text" placeholder="Search projects..." style="width:240px;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px">
+    <input id="inp2" type="text" value="hello@figmenta.com" style="width:240px;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px">
+  </div>
+  <div class="row"><blockquote class="quote">Quoted wisdom</blockquote><div class="divider"></div></div>
+  <div class="row stack"><div class="red"></div><div class="blue"></div></div>
+  <div class="row">
+    <p class="em-text">Italic emphasis</p>
+    <p class="label">Section label</p>
+    <p class="link">A link-looking line</p>
+    <h1 class="hero">Hero with shadow</h1>
+  </div>
+  <div class="row"><p class="para">A paragraph relying on the browser's normal line-height which previously captured as null and shifted vertical rhythm in Figma imports.</p></div>
+  <div class="row"><div class="okbox"></div></div>
+
+  <!-- 10: flex space-between inline spans must NOT merge ("PasswordForgot?" bug) -->
+  <div class="row"><div class="sb" style="display:flex;justify-content:space-between;width:300px"><span>LeftLabel</span><span>RightValue</span></div></div>
+
+  <!-- 11: interleaved direct text + inline child keeps order ("12:0020:00–" bug) -->
+  <div class="row"><div class="range" style="width:200px">12:00<span>–</span>20:00</div></div>
+
+  <!-- 12: boundary spaces between inline elements survive ("Built byKhush" bug) -->
+  <div class="row"><p class="credits" style="width:320px">Built by <a href="#">Khush</a> for <strong>Figmenta</strong></p></div>
+
+  <!-- 13: inline span with bg inside flex keeps its dot (status-dot bug) -->
+  <div class="row"><div class="status" style="display:flex;align-items:center;gap:8px;width:200px"><span class="dot" style="width:8px;height:8px;border-radius:50%;background:#22c55e;display:block;flex:none"></span><span>Not started</span></div></div>
+</body>
+</html>

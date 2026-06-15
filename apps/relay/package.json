@@ -1,0 +1,28 @@
+{
+  "name": "@designbridge/app-relay",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "start": "node dist/index.js",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@designbridge/schema": "workspace:*",
+    "@fastify/websocket": "^11.0.2",
+    "fastify": "^5.2.1",
+    "pg": "^8.13.1",
+    "ws": "^8.18.0",
+    "zod": "^3.25.56"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.10",
+    "@types/ws": "^8.5.13",
+    "pg-mem": "^3.0.5",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.1"
+  }
+}

@@ -489,6 +489,9 @@
       if (RASTER.length) { btn.textContent = "Rasterizing..."; await rasterizeAll(); }
       var json = JSON.stringify(data);
       if (navigator.clipboard) navigator.clipboard.writeText(json).catch(function () {});
+      // Notify any host shell (extension content script) so it can submit to the relay.
+      // Clipboard + panel stay as the offline/unpaired fallback regardless.
+      try { window.dispatchEvent(new CustomEvent("designbridge:capture", { detail: data })); } catch (e) {}
       showPanel(json, RASTER.length, data.warnings);
     } catch (err) {
       alert("DesignBridge capture failed: " + err.message);
@@ -497,10 +500,14 @@
     }
   };
 
-  // Test hook for the automated Playwright harness (no-op in normal use).
-  window.__designbridge_test = async function () {
+  // Programmatic capture API. Used by the translation worker (headless) and available to host
+  // shells. Returns the native capture object (rasters resolved).
+  window.__designbridge_capture = async function () {
     var data = capture();
     if (RASTER.length) await rasterizeAll();
     return data;
   };
+
+  // Test hook for the automated Playwright harness (alias of the capture API).
+  window.__designbridge_test = window.__designbridge_capture;
 })();

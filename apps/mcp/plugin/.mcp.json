@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "designbridge": {
+      "type": "http",
+      "url": "https://mcp.designbridge.io/mcp",
+      "headers": {
+        "Authorization": "Bearer ${DESIGNBRIDGE_API_KEY}"
+      }
+    }
+  }
+}
