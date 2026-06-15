@@ -18,7 +18,13 @@ async function createStore(): Promise<Store> {
   if (WEB_STORE === "postgres") {
     if (!DATABASE_URL) throw new Error("WEB_STORE=postgres requires DATABASE_URL");
     const pg = (await import("pg")).default;
-    const pool = new pg.Pool({ connectionString: DATABASE_URL });
+    // Managed Postgres (Supabase et al.) requires TLS; local dev does not. rejectUnauthorized:false
+    // keeps the transport encrypted while tolerating the pooler's cert chain on serverless.
+    const isLocal = /@(localhost|127\.0\.0\.1|\[::1\])/.test(DATABASE_URL);
+    const pool = new pg.Pool({
+      connectionString: DATABASE_URL,
+      ...(isLocal ? {} : { ssl: { rejectUnauthorized: false } }),
+    });
     await runMigrations(pool as unknown as Queryable);
     return new PostgresStore(pool as unknown as Queryable);
   }
