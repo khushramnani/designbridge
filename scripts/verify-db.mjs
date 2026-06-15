@@ -5,7 +5,11 @@
 //   cd apps/web && node --env-file=.env.local ../../scripts/verify-db.mjs
 // where .env.local contains DATABASE_URL=postgresql://...pooler.supabase.com:6543/postgres
 
-import pg from "pg";
+import { createRequire } from "node:module";
+
+// pnpm keeps `pg` under apps/web (not the repo root), so resolve it from there.
+const require = createRequire(new URL("../apps/web/package.json", import.meta.url));
+const pg = require("pg");
 
 const url = process.env.DATABASE_URL;
 if (!url) {
